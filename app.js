@@ -1,7 +1,6 @@
 const createError = require('http-errors');
 const express = require('express');
 
-
 const db = require('./db/db');
 const path = require('path');
 const cookieParser = require('cookie-parser');

@@ -11,6 +11,4 @@ const activities =  [
     }
 ];
 
-// export default activities;
-
 module.exports = activities;
