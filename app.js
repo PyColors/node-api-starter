@@ -1,5 +1,8 @@
 const createError = require('http-errors');
 const express = require('express');
+
+
+const db = require('./db/db');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
@@ -21,6 +24,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+
+
+// get all activities
+app.get('/api/v1/activities', (req, res) => {
+  res.status(200).send({
+    success: 'true',
+    message: 'activities retrieved successfully',
+    activities: db
+  })
+});
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
