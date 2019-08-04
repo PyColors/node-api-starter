@@ -9,6 +9,8 @@ const logger = require('morgan');
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 
+import bodyParser from 'body-parser';
+
 const app = express();
 
 // view engine setup
@@ -24,6 +26,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
+// Parse incoming requests data
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 // get all activities
 app.get('/api/v1/activities', (req, res) => {
@@ -33,6 +38,52 @@ app.get('/api/v1/activities', (req, res) => {
     activities: db
   })
 });
+
+app.post('/api/v1/activities', (req, res) => {
+    if(!req.body.title) {
+        return res.status(400).send({
+            success: 'false',
+            message: 'title is required'
+        });
+    } else if(!req.body.description) {
+        return res.status(400).send({
+            success: 'false',
+            message: 'description is required'
+        });
+    }
+    const activity = {
+        id: db.length + 1,
+        title: req.body.title,
+        description: req.body.description
+    };
+    db.push(activity);
+    return res.status(201).send({
+        success: 'true',
+        message: 'activity added successfully',
+        activity
+    })
+});
+
+
+app.get('/api/v1/activities/:id', (req, res) => {
+    const id = parseInt(req.params.id, 10);
+    db.map((activity) => {
+        if (activity.id === id) {
+            return res.status(200).send({
+                success: 'true',
+                message: 'activity retrieved successfully',
+                activity,
+            });
+        }
+    });
+    return res.status(404).send({
+        success: 'false',
+        message: 'activity does not exist',
+    });
+});
+
+
+
 
 
 // catch 404 and forward to error handler
