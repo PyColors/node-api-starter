@@ -19,7 +19,7 @@ app.set('view engine', 'jade');
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -28,24 +28,26 @@ app.use('/users', usersRouter);
 
 // Parse incoming requests data
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({extended: false}));
 
 // get all activities
 app.get('/api/v1/activities', (req, res) => {
-  res.status(200).send({
-    success: 'true',
-    message: 'activities retrieved successfully',
-    activities: db
-  })
+    res.status(200).send({
+        success: 'true',
+        message: 'activities retrieved successfully',
+        activities: db
+    })
 });
 
+
+// Create activity
 app.post('/api/v1/activities', (req, res) => {
-    if(!req.body.title) {
+    if (!req.body.title) {
         return res.status(400).send({
             success: 'false',
             message: 'title is required'
         });
-    } else if(!req.body.description) {
+    } else if (!req.body.description) {
         return res.status(400).send({
             success: 'false',
             message: 'description is required'
@@ -65,6 +67,7 @@ app.post('/api/v1/activities', (req, res) => {
 });
 
 
+// Get a single activity
 app.get('/api/v1/activities/:id', (req, res) => {
     const id = parseInt(req.params.id, 10);
     db.map((activity) => {
@@ -83,23 +86,44 @@ app.get('/api/v1/activities/:id', (req, res) => {
 });
 
 
+// Delete activity
+app.delete('/api/v1/activities/:id', (req, res) => {
+    const id = parseInt(req.params.id, 10);
 
+    db.map((todo, index) => {
+        if (todo.id === id) {
+            db.splice(index, 1);
+            return res.status(200).send({
+                success: 'true',
+                message: 'activity deleted successfuly',
+            });
+        }
+    });
+
+
+    return res.status(404).send({
+        success: 'false',
+        message: 'activity not found',
+    });
+
+
+});
 
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
+app.use(function (req, res, next) {
+    next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+app.use(function (err, req, res, next) {
+    // set locals, only providing error in development
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+    // render the error page
+    res.status(err.status || 500);
+    res.render('error');
 });
 
 module.exports = app;
