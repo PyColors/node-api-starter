@@ -7,6 +7,7 @@ import bodyParser from 'body-parser';
 
 import router from './routes/index.js';
 import usersRouter from './routes/users';
+import activitesRouter from './routes/activities';
 import indexRouter from './routes/index';
 
 const app = express();
@@ -23,13 +24,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/', activitesRouter);
 
 // Parse incoming requests data
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
 app.use(router);
-
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
