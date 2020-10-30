@@ -1,0 +1,12 @@
+language: node_js
+
+os: osx
+  
+script:
+  - npm install
+  - npm start
+
+cache:
+  yarn: true
+  directories:
+    - node_modules
